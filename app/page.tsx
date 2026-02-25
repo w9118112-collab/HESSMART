@@ -31,11 +31,13 @@ export default function HessMartPage() {
       <header style={{ borderBottom: '1px solid #f3f4f6', padding: '20px 24px' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           {/* Logo 🛒 标识 */}
-          <div style={{ cursor: 'pointer' }} onClick={() => setRoute('home')}>
-            <h1 style={{ fontSize: '26px', fontWeight: '900', fontStyle: 'italic', margin: 0 }}>
-              HESS<span style={{ color: '#e11d48' }}>MART</span>🛒
-            </h1>
-          </div>
+          <div style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => setRoute('home')}>
+  <img 
+    src="/logo.png" 
+    alt="HessMart" 
+    style={{ height: '50px', width: 'auto' }} 
+  />
+</div>
           
           <input type="text" placeholder="Search winners products..." style={{ flexGrow: 1, maxWidth: '500px', margin: '0 40px', height: '40px', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '20px', padding: '0 20px', outline: 'none' }} />
 
@@ -66,19 +68,19 @@ export default function HessMartPage() {
           </nav>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+
             <div style={{ width: '1px', height: '30px', backgroundColor: '#eee' }}></div>
-            {/* 蓝圈购物车 */}
-            <div style={{ width: '46px', height: '46px', border: '2px solid #1e3a8a', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-               <span style={{ fontSize: '22px' }}>🛒</span>
-            </div>
-            {/* 右侧红按钮 */}
-            <button 
-              onClick={() => setRoute('why')}
-              style={{ backgroundColor: '#e11d48', color: '#fff', border: 'none', borderRadius: '12px', padding: '10px 25px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', fontWeight: '900' }}
-            >
-              <span style={{ fontSize: '18px' }}>💡</span>
-              <span style={{ fontSize: '10px' }}>PICK & PROFIT</span>
-            </button>
+
+            <img 
+              src="/pick.png"
+              alt="Cart & Profit" 
+              onClick={() => setRoute('why')} 
+              style={{
+                height: '60px',
+                width: 'auto',
+                cursor: 'pointer'
+              }}
+            />
           </div>
         </div>
       </div>
