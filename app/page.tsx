@@ -3,13 +3,23 @@
 import { Images } from 'lucide-react';
 import React, { useState } from 'react';
 
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  images?: string[];
+  description?: string;
+  detailedDescription?: string;
+}
+
 export default function HessMartPage() {
   const [route, setRoute] = useState('home');
-  const [subCategory, setSubCategory] = useState(null);
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [subCategory, setSubCategory] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // 切换路由时重置子分类和选中商品
-  const handleRouteChange = (newRoute) => {
+  const handleRouteChange = (newRoute: string) => {
     setRoute(newRoute);
     setSubCategory(null);
     setSelectedProduct(null);
@@ -39,7 +49,7 @@ export default function HessMartPage() {
   ];
 
   // GROCERIES 商品数据
-  const productsBySubCategory = {
+  const productsBySubCategory: Record<string, Product[]> = {
     fruits: [
       { id: 1, name: '苹果', price: 5.99, image: '/apple.jpg' },
       { id: 2, name: '香蕉', price: 3.99, image: '/banana.jpg' },
@@ -75,7 +85,7 @@ export default function HessMartPage() {
   ];
 
   // FASHION 商品数据（请替换为实际图片路径）
-  const productsByFashionSubCategory = {
+  const productsByFashionSubCategory: Record<string, Product[]> = {
     women: [
       { 
         id: 101, 
