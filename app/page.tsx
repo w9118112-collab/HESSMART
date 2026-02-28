@@ -262,8 +262,8 @@ export default function HessMartPage() {
         {route === 'why' && (
           <div style={{ maxWidth: '900px', margin: '0 auto' }}>
             <p style={{ fontSize: '48px', fontWeight: '900', fontStyle: 'italic', textAlign: 'center', marginBottom: '40px' }}>
-              "WE DID THE RESEARCH. <br />
-              <span style={{ color: '#e11d48' }}>YOU DO THE PROFITING.</span>"
+              WE DID THE RESEARCH. <br />
+              <span style={{ color: '#e11d48' }}>YOU DO THE PROFITING.</span>
             </p>
             <div style={{ backgroundColor: '#fff', padding: '60px', borderRadius: '40px', border: '1px solid #eee' }}>
               <p style={{ fontSize: '26px', color: '#6b7280', fontStyle: 'italic', lineHeight: '1.5', marginBottom: '40px' }}>
