@@ -345,65 +345,119 @@ export default function HessMartPage() {
     return '';
   }
 
-  // ---------- 渲染分类概览页（显示所有子分类及其商品）----------
-  const renderCategoryOverview = (
+  // ---------- 新增：渲染左右分类布局（左侧子类目，右侧商品）----------
+  const renderCategoryLayout = (
     mainCatId: string,
     subs: { id: string; name: string; icon: string }[],
     productsMap: Record<string, Product[]>
   ) => {
+    // 合并所有子分类的商品（用于“全部”）
+    const allProducts = Object.values(productsMap).flat();
+
+    // 当前要显示的商品列表
+    const displayProducts = subCategory ? productsMap[subCategory] || [] : allProducts;
+
     return (
-      <div>
-        <h2 style={{ fontSize: '32px', fontWeight: '900', marginBottom: '30px' }}>
-          {navCategories.find((c) => c.id === mainCatId)?.name} 全部分类
-        </h2>
-        {subs.map((sub) => {
-          const products = productsMap[sub.id] || [];
-          if (products.length === 0) return null;
-          return (
-            <div key={sub.id} style={{ marginBottom: '40px' }}>
-              <h3 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span>{sub.icon}</span> {sub.name}
-              </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
-                {products.map((product) => (
-                  <div
-                    key={product.id}
-                    onClick={() => {
-                      setSelectedProduct(product);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
+      <div style={{ display: 'flex', gap: '30px' }}>
+        {/* 左侧子分类列表 */}
+        <div style={{ width: '220px', flexShrink: 0 }}>
+          <h3 style={{ fontSize: '18px', fontWeight: '700', marginBottom: '16px', color: '#4b5563' }}>
+            {navCategories.find((c) => c.id === mainCatId)?.name}
+          </h3>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            {/* “全部”选项 */}
+            <li
+              onClick={() => setSubCategory(null)}
+              style={{
+                padding: '10px 16px',
+                marginBottom: '4px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                backgroundColor: subCategory === null ? '#f3f4f6' : 'transparent',
+                color: subCategory === null ? '#e11d48' : '#1f2937',
+                fontWeight: subCategory === null ? '700' : '400',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f9fafb')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = subCategory === null ? '#f3f4f6' : 'transparent')}
+            >
+              全部
+            </li>
+            {subs.map((sub) => (
+              <li
+                key={sub.id}
+                onClick={() => handleSubClick(mainCatId, sub.id)}
+                style={{
+                  padding: '10px 16px',
+                  marginBottom: '4px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  backgroundColor: subCategory === sub.id ? '#f3f4f6' : 'transparent',
+                  color: subCategory === sub.id ? '#e11d48' : '#1f2937',
+                  fontWeight: subCategory === sub.id ? '700' : '400',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f9fafb')}
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = subCategory === sub.id ? '#f3f4f6' : 'transparent')
+                }
+              >
+                <span>{sub.icon}</span>
+                <span>{sub.name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* 右侧商品网格 */}
+        <div style={{ flex: 1 }}>
+          <h2 style={{ fontSize: '24px', fontWeight: '700', marginBottom: '20px' }}>
+            {subCategory ? subs.find((s) => s.id === subCategory)?.name : '全部商品'}
+          </h2>
+          {displayProducts.length === 0 ? (
+            <p style={{ color: '#9ca3af', textAlign: 'center', padding: '40px' }}>暂无商品</p>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+              {displayProducts.map((product) => (
+                <div
+                  key={product.id}
+                  onClick={() => {
+                    setSelectedProduct(product);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  style={{ border: '1px solid #eee', borderRadius: '12px', padding: '15px', cursor: 'pointer' }}
+                >
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px', marginBottom: '10px' }}
+                  />
+                  <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '5px' }}>{product.name}</h3>
+                  <p style={{ color: '#e11d48', fontWeight: '900' }}>${product.price.toFixed(2)}</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      alert(`已将 ${product.name} 加入购物车（演示）`);
                     }}
-                    style={{ border: '1px solid #eee', borderRadius: '12px', padding: '15px', cursor: 'pointer' }}
+                    style={{
+                      background: '#e11d48',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '20px',
+                      marginTop: '10px',
+                      cursor: 'pointer',
+                      width: '100%',
+                    }}
                   >
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', marginBottom: '10px' }}
-                    />
-                    <h4 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '5px' }}>{product.name}</h4>
-                    <p style={{ color: '#e11d48', fontWeight: '900' }}>${product.price.toFixed(2)}</p>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        alert(`已将 ${product.name} 加入购物车（演示）`);
-                      }}
-                      style={{
-                        background: '#e11d48',
-                        color: '#fff',
-                        border: 'none',
-                        padding: '8px 16px',
-                        borderRadius: '20px',
-                        marginTop: '10px',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      加入购物车
-                    </button>
-                  </div>
-                ))}
-              </div>
+                    加入购物车
+                  </button>
+                </div>
+              ))}
             </div>
-          );
-        })}
+          )}
+        </div>
       </div>
     );
   };
@@ -477,7 +531,7 @@ export default function HessMartPage() {
           {/* 新增的优惠图片 */}
           <div style={{ textAlign: 'center', marginTop: '40px' }}>
             <img
-              src="/images/offer.jpg" // 请将图片放在 public/images/offer.jpg
+              src="/images/offer.jpg"
               alt="New Customer Offer: 20% OFF + FREE SHIPPING"
               style={{ maxWidth: '100%', borderRadius: '16px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
               onClick={() => handleMainClick('offer')}
@@ -522,12 +576,12 @@ export default function HessMartPage() {
       );
     }
 
-    // 新增的优惠页面
+    // 优惠页面
     if (mainCategory === 'offer') {
       return (
         <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
           <img
-            src="/images/offer.jpg" // 同样使用该图片，也可以放大
+            src="/images/offer.jpg"
             alt="New Customer Offer"
             style={{ width: '100%', borderRadius: '24px', marginBottom: '30px' }}
           />
@@ -628,87 +682,34 @@ export default function HessMartPage() {
       );
     }
 
-    // 分类概览页（当主分类有子分类且未选中具体子分类时）
-    if (mainCategory === 'fashion' && !subCategory) {
-      return renderCategoryOverview('fashion', fashionSubs, productsByFashionSubCategory);
+    // 分类布局：有子分类的主分类使用左右布局
+    if (mainCategory === 'fashion') {
+      return renderCategoryLayout('fashion', fashionSubs, productsByFashionSubCategory);
     }
-    if (mainCategory === 'auto' && !subCategory) {
-      return renderCategoryOverview('auto', autoSubs, productsByAutoSubCategory);
+    if (mainCategory === 'auto') {
+      return renderCategoryLayout('auto', autoSubs, productsByAutoSubCategory);
     }
-    if (mainCategory === 'pet' && !subCategory) {
-      return renderCategoryOverview('pet', petSubs, productsByPetSubCategory);
+    if (mainCategory === 'pet') {
+      return renderCategoryLayout('pet', petSubs, productsByPetSubCategory);
     }
-    if (mainCategory === 'shoes' && !subCategory) {
-      return renderCategoryOverview('shoes', shoesSubs, productsByShoesSubCategory);
+    if (mainCategory === 'shoes') {
+      return renderCategoryLayout('shoes', shoesSubs, productsByShoesSubCategory);
     }
-    if (mainCategory === 'muslim' && !subCategory) {
-      return renderCategoryOverview('muslim', muslimSubs, productsByMuslimSubCategory);
+    if (mainCategory === 'muslim') {
+      return renderCategoryLayout('muslim', muslimSubs, productsByMuslimSubCategory);
     }
-    if (mainCategory === 'cosmetics' && !subCategory) {
-      return renderCategoryOverview('cosmetics', cosmeticsSubs, productsByCosmeticsSubCategory);
+    if (mainCategory === 'cosmetics') {
+      return renderCategoryLayout('cosmetics', cosmeticsSubs, productsByCosmeticsSubCategory);
     }
-    if (mainCategory === 'skincare' && !subCategory) {
-      return renderCategoryOverview('skincare', skincareSubs, productsBySkincareSubCategory);
-    }
-
-    // 其他分类（如 best, new 等）无子分类，显示占位
-    if (!subCategory) {
-      return (
-        <div style={{ textAlign: 'center', padding: '100px 0' }}>
-          <h2 style={{ fontSize: '40px', fontWeight: '900' }}>{navCategories.find((c) => c.id === mainCategory)?.name || mainCategory.toUpperCase()}</h2>
-          <p style={{ color: '#9ca3af', marginTop: '20px' }}>该分类暂无具体子分类，请从导航栏选择</p>
-        </div>
-      );
+    if (mainCategory === 'skincare') {
+      return renderCategoryLayout('skincare', skincareSubs, productsBySkincareSubCategory);
     }
 
-    // 有具体子分类时，显示该子分类的商品列表
-    const products = getCurrentProducts();
+    // 其他无子分类的分类（如 best、new 等）显示占位
     return (
-      <div>
-        <button
-          onClick={() => setSubCategory(null)}
-          style={{ marginBottom: '20px', color: '#e11d48', background: 'none', border: 'none', cursor: 'pointer' }}
-        >
-          ← 返回 {navCategories.find((c) => c.id === mainCategory)?.name} 全部分类
-        </button>
-        <h2 style={{ fontSize: '28px', fontWeight: '900', marginBottom: '20px' }}>{getSubCategoryName()}</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
-          {products.map((product) => (
-            <div
-              key={product.id}
-              onClick={() => {
-                setSelectedProduct(product);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              style={{ border: '1px solid #eee', borderRadius: '12px', padding: '15px', cursor: 'pointer' }}
-            >
-              <img
-                src={product.image}
-                alt={product.name}
-                style={{ width: '100%', height: '120px', objectFit: 'cover', borderRadius: '8px', marginBottom: '10px' }}
-              />
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '5px' }}>{product.name}</h3>
-              <p style={{ color: '#e11d48', fontWeight: '900' }}>${product.price.toFixed(2)}</p>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  alert(`已将 ${product.name} 加入购物车（演示）`);
-                }}
-                style={{
-                  background: '#e11d48',
-                  color: '#fff',
-                  border: 'none',
-                  padding: '8px 16px',
-                  borderRadius: '20px',
-                  marginTop: '10px',
-                  cursor: 'pointer',
-                }}
-              >
-                加入购物车
-              </button>
-            </div>
-          ))}
-        </div>
+      <div style={{ textAlign: 'center', padding: '100px 0' }}>
+        <h2 style={{ fontSize: '40px', fontWeight: '900' }}>{navCategories.find((c) => c.id === mainCategory)?.name || mainCategory.toUpperCase()}</h2>
+        <p style={{ color: '#9ca3af', marginTop: '20px' }}>该分类暂无具体子分类，请从导航栏选择</p>
       </div>
     );
   };
